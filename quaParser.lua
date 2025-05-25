@@ -1,4 +1,5 @@
-function quaParse(file)
+function quaParse(file, harmcPath, harmcName
+)
     local qua = Tinyyaml.parse(love.filesystem.read(file))
     local metaData = {}
     local timingPoints = {}
@@ -8,7 +9,7 @@ function quaParse(file)
         title = qua.Title,
         audioFile = qua.AudioFile,
         artist = qua.Artist,
-        source = qua.Source,
+        source = "s" .. qua.Source,
         tags = qua.Tags,
         difficultyName = qua.DifficultyName,
         creator = qua.Creator,
@@ -22,11 +23,13 @@ function quaParse(file)
     for i = 1,#qua.TimingPoints do
         local timingPoint = qua.TimingPoints[i]
         local startTime = timingPoint.StartTime
+        if not startTime then goto continue end
         local bpm = (timingPoint.Bpm or 0)
         table.insert(timingPoints, {startTime = startTime, bpm = bpm})
         if i == 1 then 
             metaData.bpm = bpm
         end
+        ::continue::
     end
     for i = 1,#qua.HitObjects do
         local hitObject = qua.HitObjects[i]
@@ -41,14 +44,16 @@ function quaParse(file)
         local sliderVelocity = qua.SliderVelocities[i]
         local startTime = sliderVelocity.StartTime
         local multiplier = sliderVelocity.Multiplier
+        if not startTime or not multiplier then goto continue end
         table.insert(sliderVelocities, {startTime = startTime, multiplier = multiplier})
+        ::continue::
     end
-    makeHarmc(metaData, timingPoints, hitObjects, sliderVelocities)
+    makeHarmc(metaData, timingPoints, hitObjects, sliderVelocities, harmcPath, harmcName)
 end
 
 
 
-function makeHarmc(metaData, timingPoints, hitObjects, sliderVelocities)
+function makeHarmc(metaData, timingPoints, hitObjects, sliderVelocities, harmcPath, harmcName)
     local string = "[meta]\n"
     for i, Data in pairs(metaData) do
         string = string .. i .. ":" .. Data .. "\n"
@@ -65,8 +70,9 @@ function makeHarmc(metaData, timingPoints, hitObjects, sliderVelocities)
     for i, HitObject in ipairs(hitObjects) do
         string = string .. "note:" .. HitObject.startTime .. ":" .. HitObject.endTime .. "" .. ":" .. HitObject.lane .. "\n"
     end
-    saveToFile(metaData.title .. "" .. metaData.difficultyName .. ".harmc", string)
+    saveToFile(harmcPath .. "/" .. harmcName .. ".harmc", string)
 end
+
 function saveToFile(filename, content)
     local success, message = love.filesystem.write(filename, content)
     if success then 
