@@ -17,7 +17,7 @@ function love.load()
     Tinyyaml = require("Tinyyaml")
 
     queue = love.filesystem.getDirectoryItems("quaver")
-    
+
     -- count the total number of files (used for progress  bar)
     for i = 1, #queue do
         local filesInDirectory = love.filesystem.getDirectoryItems("quaver/" .. queue[i])
