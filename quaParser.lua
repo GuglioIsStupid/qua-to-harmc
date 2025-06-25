@@ -18,7 +18,8 @@ function quaParse(file, harmcPath, harmcName
         songPreviewTime = qua.SongPreviewTime,
         gameMode = "mania",
         chartOrigin = "Quaver",
-        laneCount = qua.Mode:gsub("Keys", "")
+        laneCount = qua.Mode:gsub("Keys", ""),
+        initialSV = qua.InitialScrollVelocity or 1,
     }
     for i = 1,#qua.TimingPoints do
         local timingPoint = qua.TimingPoints[i]
