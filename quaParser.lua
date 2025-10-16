@@ -45,8 +45,7 @@ function quaParse(file, harmcPath, harmcName
         local sliderVelocity = qua.SliderVelocities[i]
         local startTime = sliderVelocity.StartTime
         local multiplier = sliderVelocity.Multiplier
-        if not startTime or not multiplier then goto continue end
-        table.insert(sliderVelocities, {startTime = startTime, multiplier = multiplier})
+        table.insert(sliderVelocities, {startTime = startTime or 0, multiplier = multiplier or 0})
         ::continue::
     end
     makeHarmc(metaData, timingPoints, hitObjects, sliderVelocities, harmcPath, harmcName)
